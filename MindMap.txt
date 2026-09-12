@@ -1,0 +1,27 @@
+####CLI CSV DATA VIEWER####
+**FEATURES TO IMPLEMENT**
+1. View data from CSV files in an organized table format, Handle Cases where no file is available.
+2. Allowing Column and Row Operations (Selection, Reordering, etc.)
+3. Search For Data (By Column or By Row)
+4. Do Math and View Statistics (If Possible)
+5. Shuffle Data (Optional)
+6.Export as JSON (Optional)
+
+
+**IMPLEMENTATION IDEAS (IN C LANG)**
+IDEA 1:
+*READING CSV DATA: Read CSV File line by line by running a scanf (FGETS WAS LATER USED) and then using a loop to count the commas in a row and add 1 to it to calculate the number of columns and calculate the number of lines and the max number of values in a single line and store them in variables then uses this info to sort out the size of the 2d array to be used to process the data, stores each value before a comma In a 2D array e.g Mario,32,Plumber -- Mario => array[0][0], 32 => array[0][1], Plumber => array[0][2], and when the end of line is reached increment the outer array by one this'll probably be done using a for loop, And Also asking how much data to be viewed in a file page e.g 5 rows.
+
+*DISPLAYING CSV DATA: This will probably be done also using a loop and I'm thinking of using \t for the table and also Maybe Include the option to differentiate the First Rows potentially using ASCI to Capitalize it the option will probably be given with a command maybe (-H) and another command (-N) to Number each row, although these options might still be available after running the code with non of those.
+
+*COLUMN OPERATIONS: For Selection (Column) - Using a loop in the array we can select a specific row using a loop where inner array remains constant and the outer one is iterated upon.
+                    For Selection (Row) - Using the same loop type as before we make the outer loop constant and the inner loop iterate.
+
+                    For Reordering(Column) - Understanding how the columns from the display loop in the array will be printed, So lets collect input from the user like 1,2,3 we know this is the order in which the data is
+                    normally printed (although in an array its 0,1,2 -- Inner Array) so when the user enters input like say e.g. 3,1,2 first we subtract by one making it 2,0,1 for the array then keeping the outer loop constant then when its done printing the columns 2, it goes to 0, then to 1. This can be handled by storing user inputted numbers in an array and using it to manipulate the array if the number of arguments put in the array (for the user input) is more than the number of columns then we return an error.
+
+
+
+*SEARCHING: Basically use a loop to search through the array with string compare and get the index where it was found and print that part of the array by using an if statement and the current index when it was found.
+*SHUFFLE DATA:TBD
+*EXPORT AS JSON: TBD

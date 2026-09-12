@@ -1,0 +1,19 @@
+#THINGS ACCOMPLISHED
+- Got code to sort out the number of rows and columns
+- Was able to dynamically size the multidimensional array the parsed data will be stored in
+-
+
+#THINGS LEARNED
+- When reading a file from a stream it has an internal position indicator for example: once its read in a function and read again in another function the 
+second function starts from where the first one stopped like a blinking cursor in word, the drawback of this is that you can't read a file from beginning twice
+unless you use rewind(stream) which does not work on stdin.
+
+- fgets reads to the end of a line meaning to read a whole file like a csv you ought to utilize a for loop, In said for loop it's best to use string[i] != '\0'
+instead of just allowing the file to read to the end of the buffer so it stops at the exact end of the string to avoid unexpected errors.
+
+- To dynamically store the size of an array in file scope you use a pointer then set use malloc to set its size, for multidimensional arrays you use a pointer for
+each dimension e.g arr[][] will be **arr and  also in a multidimensional array you have to use a for loop to store the size of the inner array in each of the outer
+array (i.e store the size of every column in every row, for example if you have 3 columns and 4 rows you have to store the 3 columns in the 4 rows meaning we get 12 columns in total)
+e.g arr[i] = malloc(size of the column) this stores the size of your column in row i.
+
+- Segmentation Fault occurs when you try to alter a memory space you do not have access to.

@@ -1,0 +1,11 @@
+#THINGS ACCOMPLISHED
+- Managed to write the function that parses CSVs.
+
+#THINGS LEARNED
+- When writing somewhat complex blocks of code endeavour to go step by step, For instance I was able to write the code that parses the first column, then the first line
+then I was able to move on to parsing row by row.
+
+- When Debugging a problem and using a debugger to find the culprit ensure you try your best to check the scenarios that could lead to the line malfunctioning,
+for instance you could have saved hours off had you just printed out the r,c,k and i values and found out that there was a comma in the csv which hadn't been handled yet.
+
+- For a boolean bool trigger, trigger = !trigger toggles it on and off.
