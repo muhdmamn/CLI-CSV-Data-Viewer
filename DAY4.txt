@@ -1,0 +1,7 @@
+#THINGS ACCOMPLISHED
+- Handled more edge cases
+- Fixed existing bugs
+
+#THINGS LEARNED
+- It's always a good idea to add guards to prevent errors like segmentation faults,for instance in my parse_info function I now added checks to see if the values where going to overflow and exit the program avoiding segmentation faults
+- Also check for other cases that might've been missed.

@@ -42,10 +42,13 @@ void file_info(FILE *stream){
         // so the functions reads to the end of the exact file and not just to a given buffer size.
         
     }
-    if (Col_No > 0) {
+    if (Col_No >= 0) {
         Col_No++;
     }
     rewind(stream);//Rewinds the file stream so it can be reused for reading
+    if (content[strlen(content)-1] != '\n'){
+        Row_No++;
+    }//Handles the case where the last character in a CSV is not a newline
 
 }//Takes the file stream to be read from as an argument
 
@@ -55,7 +58,7 @@ void init_table(){
     for (int i = 0; i < Row_No; i++){
         table_ptr[i] = malloc(Col_No * sizeof(char *)); //Allocate memory for every column
         for (int j = 0; j < Col_No; j++){
-            table_ptr[i][j] = malloc(MAX_STRING_LENGTH * sizeof(char));//Allocate memory for every string
+            table_ptr[i][j] = malloc(MAX_STRING_LENGTH * sizeof(char));//Allocate memory for every character
         }
     }
 }//This function is to allocate space for a table we will store the CSV content, 
@@ -91,10 +94,14 @@ void parse_info(FILE *stream){
             if (content[i] != '\n' && content[i] != ',' && content[i] != '"'){
                 table_ptr[r][c][k] = content[i];
                 k++;
+                if (k >= MAX_STRING_LENGTH) {
+                    fprintf(stderr,"Column [%d] more than 1024 characters", c);//Handles the case where a column has more characters than the MAX STRING LENGTH
+                }
                 //printf("r:%d,c:%d,k:%d,i:%d\n",r,c,k,i);
             }
             else if (content[i] == ',') {
                 if (quoted){
+                    table_ptr[r][c][k++] = content[i];//Adds the comma to the column string in the array
                    // printf("r:%d,c:%d,k:%d,i:%d\n",r,c,k,i);
                     continue;
                 }
@@ -105,6 +112,10 @@ void parse_info(FILE *stream){
                     }
                     k = 0;
                     c++;
+                    if (c >= Col_No) {
+                        fprintf(stderr,"Malformed CSV");
+                        exit(1);
+                    }//Handles the case where a row has more columns than the header row
                     //printf("r:%d,c:%d,k:%d,i:%d\n",r,c,k,i);
                     continue;
                }
@@ -143,7 +154,7 @@ void print_info(int rows){
     }
 }
 
-void tbd(int rows){
+/*void tbd(int rows){
     int PAGE = 1;
     char opt;
 
@@ -160,7 +171,7 @@ void tbd(int rows){
     else {
         printf("Invalid Input");
     }
-}
+}*/
 
 int main(int argc, char *argv[]){
     if (argc == 1){
