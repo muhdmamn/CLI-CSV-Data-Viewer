@@ -27,7 +27,9 @@ void free_counter(){
 
 void file_info(FILE *stream){
     bool quoted = false;
+    bool no_content = false;
     while (fgets(content,content_size,stream)){
+        
         for (int i = 0; content[i] != 0; i++){
             if (content[i] == '\n'){
                 Row_No = Row_No + 1;
@@ -42,13 +44,22 @@ void file_info(FILE *stream){
         // so the functions reads to the end of the exact file and not just to a given buffer size.
         
     }
-    if (Col_No >= 0) {
+    if (Col_No >= 0 && no_content ==  false) {
         Col_No++;
-    }
+    } 
     rewind(stream);//Rewinds the file stream so it can be reused for reading
-    if (content[strlen(content)-1] != '\n'){
+    if (fgets(content,content_size,stream) == NULL) {
+            Row_No = 0;
+            Col_No = 0;
+            no_content = true;
+        } //Handles empty file case 
+    rewind(stream);//Rewinds the stream again
+
+    if (content[strlen(content)-1] != '\n' && no_content == false){
         Row_No++;
     }//Handles the case where the last character in a CSV is not a newline
+
+    //To-do: Handle Empty file case.
 
 }//Takes the file stream to be read from as an argument
 
@@ -87,7 +98,7 @@ void parse_info(FILE *stream){
     int k = 0;
     int c = 0;
     int r = 0;
-    while (fgets(content,content_size, stream)) {
+    while (fgets(content,content_size, stream)) {                        
         i = 0;
         bool quoted = false; //Boolean for handling quotes
         for (;content[i] != '\0'; i++) {
@@ -113,7 +124,7 @@ void parse_info(FILE *stream){
                     k = 0;
                     c++;
                     if (c >= Col_No) {
-                        fprintf(stderr,"Malformed CSV");
+                        fprintf(stderr,"Malformed CSV\n");
                         exit(1);
                     }//Handles the case where a row has more columns than the header row
                     //printf("r:%d,c:%d,k:%d,i:%d\n",r,c,k,i);
@@ -137,7 +148,7 @@ void parse_info(FILE *stream){
             }
         }
     }
-    printf("Row No:%d,%d\nCol No:%d,%d\nString:%d,%d\n",Row_No,r,Col_No,c,MAX_STRING_LENGTH,k);
+    //printf("Row No:%d,%d\nCol No:%d,%d\nString:%d,%d\n",Row_No,r,Col_No,c,MAX_STRING_LENGTH,k);
 }
 
 void print_info(int rows){
@@ -188,12 +199,13 @@ int main(int argc, char *argv[]){
     }
     file_info(in_file);
     if (Row_No == 0 && Col_No == 0) {
-        fprintf(stderr, "No Rows or Columns Detected");
+        fprintf(stderr, "No Rows or Columns Detected\n");
         return 3;
     }
     init_counter();
     init_table();
     parse_info(in_file);
+    //printf("%s\n\n",table_ptr[0][0]);
     print_info(Row_No);
     free_table();
     free_counter();
