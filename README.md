@@ -31,4 +31,5 @@ This project was developed as a learning excercise in C programming, focusing on
 ## Known Limitations (To be worked on in future)
 - CCDV currently does not handle multiple files at once
 - CCDV currently does not handle Malformed CSVs
+- CSVs with an empty first row will have issues
 
