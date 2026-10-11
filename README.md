@@ -22,7 +22,7 @@ gcc CCDV.c -o CCDV
 - Test CSV files for development
 
 ## Development Notes
-This project was developed as a learning excercise in C programming, focusing on:
+This project was developed as a learning exercise in C programming, focusing on:
 
 - Dynamic Memory Allocation
 - File Handling and Parsing
