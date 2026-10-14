@@ -32,6 +32,9 @@ void file_info(FILE *stream){
         
         for (int i = 0; content[i] != 0; i++){
             if (content[i] == '\n'){
+                if (quoted) {
+                    continue;
+                }
                 Row_No = Row_No + 1;
             }
             if (content[i] == ',' && Row_No == 0 && quoted == false){
@@ -44,22 +47,24 @@ void file_info(FILE *stream){
         // so the functions reads to the end of the exact file and not just to a given buffer size.
         
     }
-    if (Col_No >= 0 && no_content ==  false) {
-        Col_No++;
-    } 
+    if (no_content == false && strlen(content) > 0 && content[strlen(content)-1] != '\n'){
+        Row_No++;
+    }//Handles the case where the last character in a CSV is not a newline
+    //The option checks if the array isn't empty then if there is info in the content buffer (to avoid segfaults on a file that only has \n) and if the last character in the last line isn't \n if so we add 1 to Row_no
+
+    //To-do: Handle Empty file case.
     rewind(stream);//Rewinds the file stream so it can be reused for reading
     if (fgets(content,content_size,stream) == NULL) {
             Row_No = 0;
             Col_No = 0;
             no_content = true;
         } //Handles empty file case 
+    
+    if (Col_No >= 0 && no_content ==  false) {
+        Col_No++;
+    } 
     rewind(stream);//Rewinds the stream again
 
-    if (content[strlen(content)-1] != '\n' && no_content == false){
-        Row_No++;
-    }//Handles the case where the last character in a CSV is not a newline
-
-    //To-do: Handle Empty file case.
 
 }//Takes the file stream to be read from as an argument
 
@@ -98,22 +103,23 @@ void parse_info(FILE *stream){
     int k = 0;
     int c = 0;
     int r = 0;
-    while (fgets(content,content_size, stream)) {                        
+    bool quoted = false; //Boolean for handling quotes
+    while (fgets(content,content_size, stream)) {                   
         i = 0;
-        bool quoted = false; //Boolean for handling quotes
         for (;content[i] != '\0'; i++) {
             if (content[i] != '\n' && content[i] != ',' && content[i] != '"'){
                 table_ptr[r][c][k] = content[i];
                 k++;
                 if (k >= MAX_STRING_LENGTH) {
                     fprintf(stderr,"Column [%d] more than 1024 characters", c);//Handles the case where a column has more characters than the MAX STRING LENGTH
+                    exit(1);
                 }
                 //printf("r:%d,c:%d,k:%d,i:%d\n",r,c,k,i);
             }
             else if (content[i] == ',') {
                 if (quoted){
                     table_ptr[r][c][k++] = content[i];//Adds the comma to the column string in the array
-                   // printf("r:%d,c:%d,k:%d,i:%d\n",r,c,k,i);
+                    //printf("r:%d,c:%d,k:%d,i:%d\n",r,c,k,i);
                     continue;
                 }
                 else {
@@ -132,8 +138,17 @@ void parse_info(FILE *stream){
                }
             }
             else if (content[i] == '\n') {
+                if (quoted) {
+                    table_ptr[r][c][k] = '\n';
+                    k++;
+                    continue;
+                }
                 table_ptr[r][c][k] = '\0';
                 r++;
+                if (r > Row_No) {
+                    fprintf(stderr,"Malformed CSV\n");
+                    exit(1);
+                }
                 if (counter[c] < k) {
                     counter[c] = k;
                 }
@@ -148,13 +163,21 @@ void parse_info(FILE *stream){
             }
         }
     }
+    if (quoted) {
+            fprintf(stderr,"Malformed CSV: Improper Quotation");
+            exit(1);
+        } 
+        
+    if (c > 0 || k > 0) {
+        table_ptr[r][c][k] = '\0';
+        if (counter[c] < k) {
+            counter[c] = k;
+        }
+    }
     //printf("Row No:%d,%d\nCol No:%d,%d\nString:%d,%d\n",Row_No,r,Col_No,c,MAX_STRING_LENGTH,k);
 }
 
 void print_info(int rows){
-    bool cont = false;
-    int PAGE = 1;
-    char opt;
     int r;
     printf("Rows:%d,Columns:%d\n",Row_No,Col_No);
     for (r = 0; r < (rows); r++) {
@@ -165,32 +188,12 @@ void print_info(int rows){
     }
 }
 
-/*void tbd(int rows){
-    int PAGE = 1;
-    char opt;
-
-    printf("PAGE: %d\n",PAGE);
-    printf("Continue? y/n\n");
-    fgets(&opt, 1 , stdin);
-    if (opt == 'Y' || opt == 'y') {
-        rows = rows + rows;
-        print_info(rows);
-    }
-    else if (opt == 'n' || opt == 'N') {
-        printf("Okay");
-    }
-    else {
-        printf("Invalid Input");
-    }
-}*/
-
 int main(int argc, char *argv[]){
     if (argc == 1){
        fprintf(stderr,"No Arguments Passed.\n");
         return 2;
 
     }
-    char arr[content_size];
     //FILE *in_file = fopen(argv[1], "r"); //The file stream is the first argument passed to the program
     FILE *in_file;
     if (!(in_file = fopen(argv[1], "r"))){
@@ -202,6 +205,7 @@ int main(int argc, char *argv[]){
         fprintf(stderr, "No Rows or Columns Detected\n");
         return 3;
     }
+    printf("Rows:%d,Columns;%d\n",Row_No,Col_No);
     init_counter();
     init_table();
     parse_info(in_file);
