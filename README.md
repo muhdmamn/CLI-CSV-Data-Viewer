@@ -17,7 +17,7 @@ gcc CCDV.c -o CCDV
 
 ## Project Files 
 - CCDV.c (Main Source Code)
-- DAY1.txt, DAY2.txt, DAY3.txt DAY4.txt(Learning Documentation)
+- DAY1.txt, DAY2.txt, DAY3.txt DAY4.txt, DAY5.txt(Learning Documentation)
 - Inspo.png (Project Inspiration)
 - Test CSV files for development
 
