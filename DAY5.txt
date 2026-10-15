@@ -1,0 +1,9 @@
+#THINGS ACCOMPLISHED
+- Handled Newlines inside quoted fields
+- Added a malformed CSV detector for unclosed quotes
+- Improved Empty file handling
+- Added Malloc checks
+- Refactored Global Variables into a struct
+#THINGS LEARNED
+- Malloc should be checked for success to ensure we do not run into errors
+- Putting variables in a struct as opposed to making them Global allows for us to be able to handle multiple instances of said variables at once and allows for better flexibility later on along the line.
