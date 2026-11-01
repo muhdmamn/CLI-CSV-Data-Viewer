@@ -1,0 +1,9 @@
+#THINGS ACCOMPLISHED
+- Managed to write a function that prints csv's cleanly
+- Handled some file handling edge cases
+- Freed allocated memory.
+
+#THINGS LEARNED
+- You can use %*s to dynamically change the width when printing.
+- You can use an if statement to handle edge cases where a file cannot be opened
+- Memory must be freed in a reverse order of allocation, if freed in the wrong order you risk losing the pointers to the bottom levels causing memory leaks.
